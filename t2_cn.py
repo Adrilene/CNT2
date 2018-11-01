@@ -9,3 +9,5 @@ with open('matrix.csv', newline='') as csvfile:
     for line in line_read:
         matrix.append(line)
 
+
+print(matrix[1])
