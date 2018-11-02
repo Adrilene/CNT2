@@ -1,6 +1,7 @@
 import csv
 
-matrix = []
+matrix_points = []
+matrix_polution = []
 s1 = [23,7,30,-50,-12]
 s2 = [22,17,11,72,4]
 n = 5 
@@ -8,9 +9,18 @@ n = 5
 #ler matriz
 with open('matrix.csv', newline='') as csvfile: 
     line_read = csv.reader(csvfile, delimiter=',')
-
+    m = 1
     for line in line_read:
-        matrix.append(line)
+        if line == []:
+            m = 2
+            continue
+        if m == 1:
+            matrix_points.append(line)
+        elif m == 2:
+            matrix_polution.append(line)
+        
+print(matrix_points)
+print(matrix_polution)
 
 def sort_lists():
     for i in range(0,n):
