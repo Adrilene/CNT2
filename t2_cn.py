@@ -15,13 +15,10 @@ with open('matrix.csv', newline='') as csvfile:
             m = 2
             continue
         if m == 1:
-            matrix_points.append(line)
+            matrix_points.append(list(map(float,line)))
         elif m == 2:
-            matrix_polution.append(line)
+            matrix_polution.append(list(map(float,line)))
         
-print(matrix_points)
-print(matrix_polution)
-
 def sort_lists():
     for i in range(0,n):
         for j in range(0, n-i-1):
