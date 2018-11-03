@@ -1,14 +1,14 @@
 import csv
 
+n = 5 
+
 matrix_points = []
 matrix_polution = []
 points_solution = [23,7,30,-50,-12] #solução do sistema de pontos amostrais 23,7,30,-50,-12
-polution_solution = [0,0,0,0,0] #solução do sistema poluição 22,17,11,72,4
+polution_solution = [22,17,11,72,4] #solução do sistema poluição 22,17,11,72,4
 
 try_pts = [] #chute inicial para os pontos amostrais
 try_plt = [] #chute inicial para a poluição
-n = 5 
-e = 10e-4
 
 ### ler matrizes ###
 with open('matrix.csv', newline='') as csvfile: 
@@ -23,18 +23,7 @@ with open('matrix.csv', newline='') as csvfile:
         elif m == 2:
             matrix_polution.append(list(map(float,line)))
 
-### calcular chute inicial das matrizes ###
-def first_values():
-    for i in range(n):
-        if matrix_points[i][i] == 0:
-            try_pts.append(0)
-        else:
-            try_pts.append(matrix_points[i][n]/matrix_points[i][i])
-        if matrix_polution[i][i] == 0:
-            try_plt.append(0)
-        else:
-            try_plt.append(matrix_polution[i][n]/matrix_polution[i][i])
-
+###  Ordenar Listas ###
 def sort_lists():
     for i in range(n):
         for j in range(0, n-i-1):
@@ -45,58 +34,18 @@ def sort_lists():
 ### Função para dados de saída ### 
 def saida(): 
 
-    gauss_Seidel()
+    sort_lists()
 
     print('-------------------------------------------------')
     print ('|\tPontos  \t|\tPoluição\t|')
-    print('-------------------------------------------------')
     for i in range(0,n):
+        print('-------------------------------------------------')
         print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i], polution_solution[i]))
 
     print('-------------------------------------------------')
 
-### Erro ###
-def calculates_Error(x,m): # Recebe o vetor anterior e a indicação da matriz usada (1 para A1 e 2 para A2)
-    maxDiff = 0
-    diff = 0
-    maxSol = 0
-    for i in range(n):
-        if m == 1:
-            diff = abs(try_pts[i] - x[i])
-        elif m == 2:
-            diff = abs(try_plt[i] - x[i])
-            print('diff {} {} {}'.format(x[i], try_plt[i], diff))
-        if diff > maxDiff:
-            maxDiff = diff
-        if x[i] > maxSol:
-            maxSol = x[i]
-    if maxSol == 0:
-        return maxDiff   
-    return maxDiff/maxSol
-
-
-### Método Gauss-Seidel ###
-def gauss_Seidel():
-    k = 0 
-    aux = 0
-    xAnt = [0 for i in range(n)]
-    while(calculates_Error(xAnt, 2)):
-        for i in range(0,n): 
-            print(matrix_polution[i][n-1])
-            aux = matrix_polution[i][n-1]
-            for j in range(n):
-                if i == j:
-                    continue
-                aux = aux - matrix_polution[i][j]*try_plt[j]
-            xAnt[i] = try_plt[i]
-            if matrix_polution[i][i] == 0:
-                try_plt[i] = aux
-            else:
-                try_plt[i] = aux/matrix_polution[i][i]
-
-
-
 ###    Lagrange    ###
+
 def calculates_Lk(x, k):
     lk = 1
     
@@ -107,7 +56,7 @@ def calculates_Lk(x, k):
 
     return lk
 
-def polinomio(x):
+def result_Polinomio(x): 
     result = 0
 
     for i in range (0,n):
@@ -115,11 +64,11 @@ def polinomio(x):
 
     return result
 
+### Fim Lagrange ### 
+
 def main(): 
     
     op = 0
-    first_values()
-    sort_lists()
 
     while True:
         print('------------------------------------------')
@@ -133,10 +82,12 @@ def main():
         if op == 1:
             saida()
         elif op == 2:
-            x = int(input('Valor do ponto: '))
-            print('O grau de poluição é de {:.4f}.\n'.format(polinomio(x)))
+            pass
         elif op == 3:
             gauss_Seidel()
+        elif op == 4:
+            x = int(input("Digite o ponto: "))
+            print("A poluição é de: {:.4f}.".format(result_Polinomio(x)))
         elif op == 5: 
             print('Bye bye! :)')
             break
