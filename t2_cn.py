@@ -59,8 +59,6 @@ def saida():
 def decLU(A):
     U = np.array(matrix_points)
     L = np.eye(n)
-    #print(U)
-    #print(L)
     
     for j in range(n-1):
         for i in range(j+1, n):
@@ -69,10 +67,28 @@ def decLU(A):
                 U[i,k] = U[i,k] - (L[i,j] * U[j,k])
             U[i,j] = 0
 
-    #print('U:\n',U)
-    #print('L:\n',L)
-    return L, U
+    print('U >>\n{}'.format(U))
+    print()
+    print('L >>\n{}'.format(L))
+    print()
 
+    b = np.delete(U, np.s_[0:n], 1)
+    print('b >>\n{}'.format(b))
+    print()
+    
+    newU = np.delete(U, np.s_[n], 1)
+    print('newU >>\n{}'.format(newU))
+    print()
+
+    y = np.linalg.solve(L,b)
+    print('y >>\n{}'.format(y))
+    print()
+
+    x = np.linalg.solve(newU,y)
+    print('x >>\n{}'.format(x))
+    print()
+
+    #return L, U
 
 
 ###    Lagrange    ###
@@ -112,6 +128,7 @@ def main():
         if op == 1:
             saida()
         elif op == 2:
+            #decLU(matrix_points)
             decLU(matrix_points)
         elif op == 3:
             print('nothing to do yet')
