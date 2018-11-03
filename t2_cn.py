@@ -5,12 +5,16 @@ np.set_printoptions(precision=4)
 
 matrix_points = []
 matrix_polution = []
+
 global points_solution #solução do sistema de pontos amostrais 23,7,30,-50,-12
+
 polution_solution = [0,0,0,0,0] #solução do sistema poluição 22,17,11,72,4
 
 try_pts = [] #chute inicial para os pontos amostrais
 try_plt = [] #chute inicial para a poluição
+
 n = 5 #tamanho da matriz
+
 e = 10e-4
 
 ### ler matrizes ###
@@ -39,6 +43,7 @@ def first_values():
             try_plt.append(matrix_polution[i][n]/matrix_polution[i][i])
 
 def sort_lists():
+
     global points_solution
     points_solution = decLU(matrix_points)[3]
     #print(points_solution)
@@ -46,6 +51,7 @@ def sort_lists():
         for j in range(0, n-i-1):
            if points_solution[j,0] > points_solution[j+1,0]:
                points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
+
                polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
 
 ### Função para dados de saída ### 
@@ -55,6 +61,7 @@ def saida():
     print ('|\tPontos  \t|\tPoluição\t|')
     print('-------------------------------------------------')
     for i in range(0,n):
+
         print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
 
     print('-------------------------------------------------')
@@ -90,7 +97,9 @@ def calculates_Lk(x, k):
     for i in range(0,n):
         if i == k:
             continue
+
         lk = lk * (x - points_solution[i,0])/(points_solution[k,0]-points_solution[i,0])
+
 
     return lk
 
@@ -107,6 +116,7 @@ def main():
     op = 0
     first_values()
     sort_lists()
+
     #print(points_solution)
 
     while True:
@@ -131,7 +141,9 @@ def main():
         elif op == 4:
             x = int(input('Valor do ponto: '))
             print('O grau de poluição é de {:.4f}.\n'.format(polinomio(x)))
+
         elif op == 5:
+
             print('Bye bye! :)')
             break
         else: 
