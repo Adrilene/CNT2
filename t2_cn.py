@@ -45,8 +45,6 @@ def sort_lists():
 ### Função para dados de saída ### 
 def saida(): 
 
-    gauss_Seidel()
-
     print('-------------------------------------------------')
     print ('|\tPontos  \t|\tPoluição\t|')
     print('-------------------------------------------------')
@@ -54,48 +52,7 @@ def saida():
         print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i], polution_solution[i]))
 
     print('-------------------------------------------------')
-
-### Erro ###
-def calculates_Error(x,m): # Recebe o vetor anterior e a indicação da matriz usada (1 para A1 e 2 para A2)
-    maxDiff = 0
-    diff = 0
-    maxSol = 0
-    for i in range(n):
-        if m == 1:
-            diff = abs(try_pts[i] - x[i])
-        elif m == 2:
-            diff = abs(try_plt[i] - x[i])
-            print('diff {} {} {}'.format(x[i], try_plt[i], diff))
-        if diff > maxDiff:
-            maxDiff = diff
-        if x[i] > maxSol:
-            maxSol = x[i]
-    if maxSol == 0:
-        return maxDiff   
-    return maxDiff/maxSol
-
-
-### Método Gauss-Seidel ###
-def gauss_Seidel():
-    k = 0 
-    aux = 0
-    xAnt = [0 for i in range(n)]
-    while(calculates_Error(xAnt, 2)):
-        for i in range(0,n): 
-            print(matrix_polution[i][n-1])
-            aux = matrix_polution[i][n-1]
-            for j in range(n):
-                if i == j:
-                    continue
-                aux = aux - matrix_polution[i][j]*try_plt[j]
-            xAnt[i] = try_plt[i]
-            if matrix_polution[i][i] == 0:
-                try_plt[i] = aux
-            else:
-                try_plt[i] = aux/matrix_polution[i][i]
-
-
-
+    
 ###    Lagrange    ###
 def calculates_Lk(x, k):
     lk = 1
@@ -124,10 +81,8 @@ def main():
     while True:
         print('------------------------------------------')
         print('1 - Ver tabela (pontos e poluição)')
-        print('2 - Fatoração LU (Processo)')
-        print('3 - Gauss-Seidel (Processo)')
-        print('4 - Calcula poluição (Interpolação Lagrange)')
-        print('5 - Sair')
+        print('2 - Calcula poluição (Interpolação Lagrange)')
+        print('3 - Sair')
         op = int(input('Digite a opção: '))
 
         if op == 1:
@@ -136,8 +91,6 @@ def main():
             x = int(input('Valor do ponto: '))
             print('O grau de poluição é de {:.4f}.\n'.format(polinomio(x)))
         elif op == 3:
-            gauss_Seidel()
-        elif op == 5: 
             print('Bye bye! :)')
             break
         else: 
