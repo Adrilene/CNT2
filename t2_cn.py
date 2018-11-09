@@ -9,8 +9,7 @@ matrix_points = [] #matriz A
 matrix_polution = [] #matriz B 
 
 
-global points_solution  # Armazena solução do S1
-
+points_solution = []  # Armazena solução do S1
 global polution_solution # Armazena a solução do S2
 polution_solution = [0 for i in range(n)]
 n = 5 #tamanho da matriz
@@ -31,35 +30,47 @@ with open('matrix.csv', newline='') as csvfile:
 ###  Ordenar Listas ###
 def sort_lists():
 
-    global points_solution
-    points_solution = decLU(matrix_points)[3]
-    #print(points_solution) 
-    for i in range(n):
-        for j in range(0, n-i-1):
-           if points_solution[j,0] > points_solution[j+1,0]:
-               points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
-
-               polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
+    if len(points_solution) == 0: 
+        print('Favor, resolver o S1 primeiro. ')
+        return 0
+    elif len(polution_solution) == 0:
+        print('Favor, resolver o S2 primeiro.')
+        return 0
+    elif len(points_solution)+len(polution_solution) == 0:
+        print('Favor, resolver o S1 e o S2 primeiro.')
+        return 0
+    else:
+        #print(points_solution)
+        for i in range(n):
+            for j in range(0, n-i-1):
+                if points_solution[j,0] > points_solution[j+1,0]:
+                    points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
+                    polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
+        return 1
+    return 0
 
 ### Função para dados de saída ### 
 def saida(): 
 
-    sort_lists()
-    
-
-    print('-------------------------------------------------')
-    print ('|\tPontos  \t|\tPoluição\t|')
-    for i in range(0,n):
+    if(sort_lists()):
+        print('-------------------------------------------------')
+        print ('|\tPontos  \t|\tPoluição\t|')
+        for i in range(0,n):
 
 
-        print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
+            print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
 
 
-    print('-------------------------------------------------')
+        print('-------------------------------------------------')
+    else:
+        pass
     
 
 ###    Decomposição LU    ###
 def decLU():
+
+    global points_solution
+
     U = np.array(matrix_points)
     L = np.eye(n)
     
@@ -77,6 +88,8 @@ def decLU():
     y = np.linalg.solve(L,b)
 
     x = np.linalg.solve(newU,y)
+
+    points_solution = x
 
     return L, newU, y, x
 
@@ -181,7 +194,6 @@ def result_Polinomio(x):
     return result
 
 def main(): 
-    
     op = 0
 
     #print(points_solution)
@@ -197,14 +209,9 @@ def main():
         print('\n')
 
         if op == 1:
-            if max(points_solution) == 0: 
-                print('Favor, resolver o S1 primeiro. ')
-            elif max(polution_solution) == 0:
-                print('Favor, resolver o S2 primeiro.')
-            else:
-                saida()
+            saida()
         elif op == 2:
-            ans = decLU(matrix_points)
+            ans = decLU()
             print('###    L >> \n{}\n'.format(ans[0]))
             print('###    U >> \n{}\n'.format(ans[1]))
             print('###    y >> \n{}\n'.format(ans[2]))
