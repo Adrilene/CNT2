@@ -3,8 +3,11 @@ import numpy as np
 
 np.set_printoptions(precision=4)
 
+n = 5 
+
 matrix_points = []
 matrix_polution = []
+
 
 global points_solution #solução do sistema de pontos amostrais 23,7,30,-50,-12
 
@@ -16,6 +19,7 @@ try_plt = [] #chute inicial para a poluição
 n = 5 #tamanho da matriz
 
 e = 10e-4
+
 
 ### ler matrizes ###
 with open('matrix.csv', newline='') as csvfile: 
@@ -30,18 +34,7 @@ with open('matrix.csv', newline='') as csvfile:
         elif m == 2:
             matrix_polution.append(list(map(float,line)))
 
-### calcular chute inicial das matrizes ###
-def first_values():
-    for i in range(n):
-        if matrix_points[i][i] == 0:
-            try_pts.append(0)
-        else:
-            try_pts.append(matrix_points[i][n]/matrix_points[i][i])
-        if matrix_polution[i][i] == 0:
-            try_plt.append(0)
-        else:
-            try_plt.append(matrix_polution[i][n]/matrix_polution[i][i])
-
+###  Ordenar Listas ###
 def sort_lists():
 
     global points_solution
@@ -57,12 +50,17 @@ def sort_lists():
 ### Função para dados de saída ### 
 def saida(): 
 
+
+    sort_lists()
+
+
     print('-------------------------------------------------')
     print ('|\tPontos  \t|\tPoluição\t|')
-    print('-------------------------------------------------')
     for i in range(0,n):
 
+
         print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
+
 
     print('-------------------------------------------------')
     
@@ -89,8 +87,8 @@ def decLU(A):
 
     return L, newU, y, x
 
-
 ###    Lagrange    ###
+
 def calculates_Lk(x, k):
     lk = 1
     
@@ -103,7 +101,7 @@ def calculates_Lk(x, k):
 
     return lk
 
-def polinomio(x):
+def result_Polinomio(x): 
     result = 0
 
     for i in range (0,n):
@@ -111,11 +109,11 @@ def polinomio(x):
 
     return result
 
+### Fim Lagrange ### 
+
 def main(): 
     
     op = 0
-    first_values()
-    sort_lists()
 
     #print(points_solution)
 
