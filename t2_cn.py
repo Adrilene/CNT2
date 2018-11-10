@@ -1,7 +1,7 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import lagrange # just for testing
+from scipy.interpolate import lagrange # apenas para printar o polinômio de forma visível e plotar o gráfico
 
 
 n = 5 #tamanho da matriz
@@ -30,17 +30,8 @@ with open('matrix.csv', newline='') as csvfile:
 ###  Ordenar Listas ###
 def sort_lists():
     
-    #Se os sistemas ainda não tiverem sido solucionados,
-    #faz a chamada para as funções.
-    '''if max(points_solution) == 0: 
-        decLU()
-    if max(polution_solution) == 0:
-        if sassenfeld():
-            gaussSeidel(0.0001,1000,0) #valor padrão de erro e iterações máximas
-        else:
-            print('S2 não converge.')
-            return 0 '''
-
+    #Verifica se os sistemas já foram solucionados,
+    #caso contrário encerra a função informando qual não foi resolvido.
     if(max(points_solution) == 0 and max(polution_solution) == 0):
         print('####    ATENÇÃO    ####\nResolva o S1 e o S2 primeiro!\n')
         return 0
@@ -232,28 +223,31 @@ def plot_results():
     
 
 def main(): 
-    op = 0
+    op = str(0)
 
     #print(points_solution)
 
     while True:
-        print('------------------------------------------')
-        print('1 - Resolve o S1 (Decomposição LU)')
-        print('2 - Resolve o S2 (Gauss-Seidel)')
-        print('3 - Ver tabela (pontos e poluição)')
-        print('4 - Calcula poluição (Interpolação Lagrange)')
-        print('5 - Plot The Graph!')
-        print('6 - Sair')
-        op = int(input('Digite a opção: '))
-        print('\n')
 
-        if op == 1:
+        if op == str(0):
+            print('------------------------------------------')
+            print('1 - Resolve o S1 (Decomposição LU)')
+            print('2 - Resolve o S2 (Gauss-Seidel)')
+            print('3 - Ver tabela (pontos e poluição)')
+            print('4 - Calcula poluição (Interpolação Lagrange)')
+            print('5 - Plot The Graph!')
+            print('6 - Sair')
+            op = str(input('Digite a opção: '))
+            print('\n')
+        elif op == str(1):
+            op = str(0)
             ans = decLU()
             print('###    L >> \n{}\n'.format(ans[0]))
             print('###    U >> \n{}\n'.format(ans[1]))
             print('###    y >> \n{}\n'.format(ans[2]))
             print('###    x >> \n{}\n'.format(ans[3]))
-        elif op == 2:
+        elif op == str(2):
+            op = str(0)
             #testa se critério de convergência é satisfeito
             if sassenfeld():
                 e = float(input('Erro: '))
@@ -261,27 +255,38 @@ def main():
                 gaussSeidel(e,maxInt,1)
             else:
                 print('A matriz não irá convergir.\n')
-        elif op == 3:
+        elif op == str(3):
+            op = str(0)
             saida()
-        elif op == 4:
-            #testa se as soluções já foram calculadas.
-            if max(points_solution) == 0:
-                decLU()
-            if max(polution_solution) == 0:
-                gaussSeidel(0.0001,1000,0)
+        elif op == str(4):
+            op = str(0)
+            #Verifica se os sistemas já foram solucionados,
+            #caso contrário encerra a função informando qual não foi resolvido.
+            if(max(points_solution) == 0 and max(polution_solution) == 0):
+                print('####    ATENÇÃO    ####\nResolva o S1 e o S2 primeiro!\n')
+                continue
+            elif(max(points_solution) == 0):
+                print('####    ATENÇÃO    ####\nResolva o S1 primeiro!\n')
+                continue
+            elif(max(polution_solution) == 0):
+                print('####    ATENÇÃO    ####\nResolva o S2 primeiro!\n')
+                continue
+            else:
+                pass
 
-            print(lagrange(points_solution,polution_solution))
+            #print(lagrange(points_solution,polution_solution))
             x = float(input('Valor do ponto: '))
             print('O grau de poluição é de {:.4f}.\n'.format(result_Polinomio(x)))
-        elif op == 5:
+        elif op == str(5):
+            op = str(0)
             print('Ploting Graph')
             plot_results()
-        elif op == 6:
+        elif op == str(6):
             print('Bye bye! :)')
             break
         else: 
-            print('Inválido!')
-            return 'bugou'
+            op = str(0)
+            print('####    ATENÇÃO    ####\nOpção Inválida!\n')
 
 
 if __name__ == "__main__":
