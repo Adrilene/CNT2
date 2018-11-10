@@ -257,8 +257,17 @@ def main():
             op = str(0)
             #testa se critério de convergência é satisfeito
             if sassenfeld():
-                e = float(input('Erro: '))
-                maxInt = int(input('Número máximo de Interações: '))
+                try:
+                    e = float(input('Erro: '))
+                except ValueError:
+                    print('####    ATENÇÃO    ####\ntype(Erro) = float\n')
+                    continue
+                try:
+                    maxInt = int(input('Número máximo de Interações: '))
+                except ValueError:
+                    print('####    ATENÇÃO    ####\ntype(Num) = int\n')
+                    continue
+
                 gaussSeidel(e,maxInt,1)
             else:
                 print('A matriz não irá convergir.\n')
