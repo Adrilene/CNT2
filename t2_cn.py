@@ -10,8 +10,8 @@ matrix_polution = [] #matriz B
 
 
 points_solution = []  # Armazena solução do S1
-global polution_solution # Armazena a solução do S2
-polution_solution = [0 for i in range(n)]
+polution_solution = [] # Armazena a solução do S2
+
 n = 5 #tamanho da matriz
 
 ### ler matrizes ###
@@ -29,25 +29,27 @@ with open('matrix.csv', newline='') as csvfile:
 
 ###  Ordenar Listas ###
 def sort_lists():
-
+    
+    #Se os sistemas ainda não tiverem sido solucionados,
+    #faz a chamada para as funções.
     if len(points_solution) == 0: 
-        print('Favor, resolver o S1 primeiro. ')
-        return 0
-    elif len(polution_solution) == 0:
-        print('Favor, resolver o S2 primeiro.')
-        return 0
-    elif len(points_solution)+len(polution_solution) == 0:
-        print('Favor, resolver o S1 e o S2 primeiro.')
-        return 0
-    else:
-        #print(points_solution)
-        for i in range(n):
-            for j in range(0, n-i-1):
-                if points_solution[j,0] > points_solution[j+1,0]:
-                    points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
-                    polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
-        return 1
-    return 0
+        decLU()
+    if len(polution_solution) == 0:
+        if sassenfeld():
+            gaussSeidel(0.0001,1000,0) #valor padrão de erro e iterações máximas
+        else:
+            print('S2 não converge.')
+            return 0 
+    
+    #ordena a points_solution
+    #o mesmo swap feito nela é aplicado a polution_solution, para que os resultados seja respectivos
+    for i in range(n):
+        for j in range(n-i-1):
+            if points_solution[j,0] > points_solution[j+1,0]:
+                points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
+                polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
+        
+    return 1
 
 ### Função para dados de saída ### 
 def saida(): 
@@ -56,7 +58,6 @@ def saida():
         print('-------------------------------------------------')
         print ('|\tPontos  \t|\tPoluição\t|')
         for i in range(0,n):
-
 
             print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
 
@@ -147,10 +148,14 @@ def calculaErro(previous):
     return maxDiff/maxSol
 
 
-#Recebe a matriz B, o vetor resposta b, o "chute" inicial, elementos na resposta, e o erro.
-def gaussSeidel(erro, maxInt): 
+#Recebe o valor de erro, número máximo de iterações e uma flag para indicar se irá mostrar as iterações
+def gaussSeidel(erro, maxInt, show): 
     
     previousX = chuteInicial() #Recebe o chute inicial
+    global polution_solution
+
+    if len(polution_solution) == 0:
+        polution_solution = [0 for i in range(n)]
 
     k = 0 
     
@@ -166,9 +171,10 @@ def gaussSeidel(erro, maxInt):
 
             polution_solution[i] = (matrix_polution[i][n]-soma)/matrix_polution[i][i]
 
-        print('Solução na iteração {}: {}'.format(k,polution_solution))
-        print('Erro: {}'.format(calculaErro(previousX)))
-        print('\n')
+        if show == 1:
+            print('Solução na iteração {}: {}'.format(k,polution_solution))
+            print('Erro: {}'.format(calculaErro(previousX)))
+            print('\n')
 
         k = k+1
 
@@ -188,8 +194,8 @@ def calculates_Lk(x, k):
 def result_Polinomio(x): 
     result = 0
 
-    for i in range (0,n):
-        result += polution_solution[i]*calculates_Lk(x,i)
+    for i in range (n):
+        result = result + polution_solution[i]*calculates_Lk(x,i)
 
     return result
 
@@ -217,15 +223,22 @@ def main():
             print('###    y >> \n{}\n'.format(ans[2]))
             print('###    x >> \n{}\n'.format(ans[3]))
         elif op == 3:
+            #testa se critério de convergência é satisfeito
             if sassenfeld():
                 e = float(input('Erro: '))
                 maxInt = int(input('Número máximo de Interações: '))
-                gaussSeidel(e,maxInt)
+                gaussSeidel(e,maxInt,1)
             else:
                 print('A matriz não irá convergir.\n')
         elif op == 4:
-            x = int(input('Valor do ponto: '))
-            print('O grau de poluição é de {:.4f}.\n'.format(polinomio(x)))
+            #testa se as soluções já foram calculadas.
+            if len(points_solution) == 0:
+                decLU()
+            if len(polution_solution) == 0:
+                gaussSeidel(0.0001,1000,0)
+
+            x = float(input('Valor do ponto: '))
+            print('O grau de poluição é de {:.4f}.\n'.format(result_Polinomio(x)))
 
         elif op == 5:
 
