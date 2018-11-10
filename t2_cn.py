@@ -27,9 +27,9 @@ with open('matrix.csv', newline='') as csvfile:
         elif m == 2:
             matrix_polution.append(list(map(float,line)))
 
-###  Ordenar Listas ###
-def sort_lists():
-    
+
+###   Verificação   ###
+def verificacao():
     #Verifica se os sistemas já foram solucionados,
     #caso contrário encerra a função informando qual não foi resolvido.
     if(max(points_solution) == 0 and max(polution_solution) == 0):
@@ -42,7 +42,15 @@ def sort_lists():
         print('####    ATENÇÃO    ####\nResolva o S2 primeiro!\n')
         return 0
     else:
-        pass
+        return 1
+
+
+
+###  Ordenar Listas ###
+def sort_lists():
+    
+    if not verificacao():
+        return 0
     
     #ordena a points_solution
     #o mesmo swap feito nela é aplicado a polution_solution, para que os resultados sejam respectivos
@@ -202,24 +210,24 @@ def result_Polinomio(x):
     return result
 
 
-def plot_results():
+def plot_results(lx,ly):
+    sort_lists()
     
     x = points_solution
-    #y = np.array(polution_solution)
-    plt.figure()
+    y = polution_solution
+    city = (lx,ly)
 
-    '''u = plt.plot(x, y, 'ro', label='x/f(x)') # pontos
-    t = np.linspace(0,1,len(x))
-    pxl = scipy.interpolate.lagrange(t,x)
-    pyl = scipy.interpolate.lagrange(t,y)
-    ts = np.linspace(t[0],t[-1],n)
-    xl = pxl(ts)
-    yl = pyl(ts)
-    plt.plot(xl,yl,'b-', label='p(x)')'''
+    plt.figure()
+    plt.title('Pontos Amostrais  X  Poluição\nInterpolação Linear(Lagrange)')
+
+    plt.xlabel('Pontos Amostrais(PA)')
+    plt.ylabel('Poluição(P)')
+    plt.plot(x, y, 'ro', label='PA-P')
+    plt.plot(x, y, 'k--', label='Interpolação')
+    plt.plot(city[0],city[1], 'bo', label='Cidade')
 
     plt.legend()
     plt.show()
-
     
 
 def main(): 
@@ -235,8 +243,7 @@ def main():
             print('2 - Resolve o S2 (Gauss-Seidel)')
             print('3 - Ver tabela (pontos e poluição)')
             print('4 - Calcula poluição (Interpolação Lagrange)')
-            print('5 - Plot The Graph!')
-            print('6 - Sair')
+            print('5 - Sair')
             op = str(input('Digite a opção: '))
             print('\n')
         elif op == str(1):
@@ -260,28 +267,25 @@ def main():
             saida()
         elif op == str(4):
             op = str(0)
-            #Verifica se os sistemas já foram solucionados,
-            #caso contrário encerra a função informando qual não foi resolvido.
-            if(max(points_solution) == 0 and max(polution_solution) == 0):
-                print('####    ATENÇÃO    ####\nResolva o S1 e o S2 primeiro!\n')
+            if not verificacao():
                 continue
-            elif(max(points_solution) == 0):
-                print('####    ATENÇÃO    ####\nResolva o S1 primeiro!\n')
-                continue
-            elif(max(polution_solution) == 0):
-                print('####    ATENÇÃO    ####\nResolva o S2 primeiro!\n')
-                continue
-            else:
-                pass
 
-            #print(lagrange(points_solution,polution_solution))
-            x = float(input('Valor do ponto: '))
-            print('O grau de poluição é de {:.4f}.\n'.format(result_Polinomio(x)))
+            print('p(x) = \n{}'.format(lagrange(points_solution,polution_solution)))
+            x = float(input('Valor do ponto(x): '))
+            y = result_Polinomio(x)
+            print('O grau de poluição é de {:.4f}.\n'.format(y))
+            opt = 0
+            while True:
+                if opt == 's':
+                    plot_results(x,y)
+                    print()
+                    break
+                elif opt == 'n':
+                    print()
+                    break
+                else:
+                    opt = str(input('Deseja plotar o gráfico?(s/n): '))
         elif op == str(5):
-            op = str(0)
-            print('Ploting Graph')
-            plot_results()
-        elif op == str(6):
             print('Bye bye! :)')
             break
         else: 
