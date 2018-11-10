@@ -1,21 +1,18 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import lagrange # just for testing
 
-import scipy.interpolate
-
-np.set_printoptions(precision=4)
-
-n = 5 
-
-matrix_points = [] #matriz A
-matrix_polution = [] #matriz B 
-
-
-points_solution = []  # Armazena solução do S1
-polution_solution = [] # Armazena a solução do S2
 
 n = 5 #tamanho da matriz
+np.set_printoptions(precision=4)
+matrix_points = [] # matriz A
+matrix_polution = [] # matriz B 
+points_solution = np.zeros([n],dtype=float)  # Armazena solução do S1
+#print(points_solution)
+polution_solution = np.zeros([n],dtype=float) # Armazena a solução do S2
+#print(polution_solution)
+
 
 ### ler matrizes ###
 with open('matrix.csv', newline='') as csvfile: 
@@ -35,14 +32,26 @@ def sort_lists():
     
     #Se os sistemas ainda não tiverem sido solucionados,
     #faz a chamada para as funções.
-    if len(points_solution) == 0: 
+    '''if max(points_solution) == 0: 
         decLU()
-    if len(polution_solution) == 0:
+    if max(polution_solution) == 0:
         if sassenfeld():
             gaussSeidel(0.0001,1000,0) #valor padrão de erro e iterações máximas
         else:
             print('S2 não converge.')
-            return 0 
+            return 0 '''
+
+    if(max(points_solution) == 0 and max(polution_solution) == 0):
+        print('####    ATENÇÃO    ####\nResolva o S1 e o S2 primeiro!\n')
+        return 0
+    elif(max(points_solution) == 0):
+        print('####    ATENÇÃO    ####\nResolva o S1 primeiro!\n')
+        return 0
+    elif(max(polution_solution) == 0):
+        print('####    ATENÇÃO    ####\nResolva o S2 primeiro!\n')
+        return 0
+    else:
+        pass
     
     #ordena a points_solution
     #o mesmo swap feito nela é aplicado a polution_solution, para que os resultados sejam respectivos
@@ -159,9 +168,6 @@ def gaussSeidel(erro, maxInt, show):
     previousX = chuteInicial() #Recebe o chute inicial
     global polution_solution
 
-    if len(polution_solution) == 0:
-        polution_solution = [0 for i in range(n)]
-
     k = 0 
     
     while(k<maxInt and calculaErro(previousX)>erro):
@@ -220,8 +226,6 @@ def plot_results():
     yl = pyl(ts)
     plt.plot(xl,yl,'b-', label='p(x)')'''
 
-
-
     plt.legend()
     plt.show()
 
@@ -234,9 +238,9 @@ def main():
 
     while True:
         print('------------------------------------------')
-        print('1 - Ver tabela (pontos e poluição)')
-        print('2 - Resolve o S1 (Decomposição LU)')
-        print('3 - Resolve o S2 (Gauss-Seidel)')
+        print('1 - Resolve o S1 (Decomposição LU)')
+        print('2 - Resolve o S2 (Gauss-Seidel)')
+        print('3 - Ver tabela (pontos e poluição)')
         print('4 - Calcula poluição (Interpolação Lagrange)')
         print('5 - Plot The Graph!')
         print('6 - Sair')
@@ -244,14 +248,12 @@ def main():
         print('\n')
 
         if op == 1:
-            saida()
-        elif op == 2:
             ans = decLU()
             print('###    L >> \n{}\n'.format(ans[0]))
             print('###    U >> \n{}\n'.format(ans[1]))
             print('###    y >> \n{}\n'.format(ans[2]))
             print('###    x >> \n{}\n'.format(ans[3]))
-        elif op == 3:
+        elif op == 2:
             #testa se critério de convergência é satisfeito
             if sassenfeld():
                 e = float(input('Erro: '))
@@ -259,13 +261,16 @@ def main():
                 gaussSeidel(e,maxInt,1)
             else:
                 print('A matriz não irá convergir.\n')
+        elif op == 3:
+            saida()
         elif op == 4:
             #testa se as soluções já foram calculadas.
-            if len(points_solution) == 0:
+            if max(points_solution) == 0:
                 decLU()
-            if len(polution_solution) == 0:
+            if max(polution_solution) == 0:
                 gaussSeidel(0.0001,1000,0)
 
+            print(lagrange(points_solution,polution_solution))
             x = float(input('Valor do ponto: '))
             print('O grau de poluição é de {:.4f}.\n'.format(result_Polinomio(x)))
         elif op == 5:
