@@ -1,5 +1,8 @@
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
+
+import scipy.interpolate
 
 np.set_printoptions(precision=4)
 
@@ -42,11 +45,11 @@ def sort_lists():
             return 0 
     
     #ordena a points_solution
-    #o mesmo swap feito nela é aplicado a polution_solution, para que os resultados seja respectivos
+    #o mesmo swap feito nela é aplicado a polution_solution, para que os resultados sejam respectivos
     for i in range(n):
         for j in range(n-i-1):
-            if points_solution[j,0] > points_solution[j+1,0]:
-                points_solution[j,0], points_solution[j+1,0] = points_solution[j+1,0], points_solution[j,0]
+            if points_solution[j] > points_solution[j+1]:
+                points_solution[j], points_solution[j+1] = points_solution[j+1], points_solution[j]
                 polution_solution[j], polution_solution[j+1] = polution_solution[j+1], polution_solution[j]
         
     return 1
@@ -59,7 +62,7 @@ def saida():
         print ('|\tPontos  \t|\tPoluição\t|')
         for i in range(0,n):
 
-            print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i,0], polution_solution[i]))
+            print('|\t{:.4f}  \t|\t{:.4f}\t\t|'.format(points_solution[i], polution_solution[i]))
 
 
         print('-------------------------------------------------')
@@ -87,12 +90,14 @@ def decLU():
     newU = np.delete(U, np.s_[n], 1)
 
     y = np.linalg.solve(L,b)
+    yn = np.reshape(y,n) # array
 
     x = np.linalg.solve(newU,y)
+    xn = np.reshape(x,n) # array
 
-    points_solution = x
+    points_solution = xn
 
-    return L, newU, y, x
+    return L, newU, yn, xn
 
 
 ### Método Gauss-Seidel ###
@@ -187,7 +192,7 @@ def calculates_Lk(x, k):
         if i == k:
             continue
 
-        lk = lk * (x - points_solution[i,0])/(points_solution[k,0]-points_solution[i,0])
+        lk = lk * (x - points_solution[i])/(points_solution[k]-points_solution[i])
 
     return lk
 
@@ -196,8 +201,31 @@ def result_Polinomio(x):
 
     for i in range (n):
         result = result + polution_solution[i]*calculates_Lk(x,i)
-
+    
     return result
+
+
+def plot_results():
+    
+    x = points_solution
+    #y = np.array(polution_solution)
+    plt.figure()
+
+    '''u = plt.plot(x, y, 'ro', label='x/f(x)') # pontos
+    t = np.linspace(0,1,len(x))
+    pxl = scipy.interpolate.lagrange(t,x)
+    pyl = scipy.interpolate.lagrange(t,y)
+    ts = np.linspace(t[0],t[-1],n)
+    xl = pxl(ts)
+    yl = pyl(ts)
+    plt.plot(xl,yl,'b-', label='p(x)')'''
+
+
+
+    plt.legend()
+    plt.show()
+
+    
 
 def main(): 
     op = 0
@@ -210,7 +238,8 @@ def main():
         print('2 - Resolve o S1 (Decomposição LU)')
         print('3 - Resolve o S2 (Gauss-Seidel)')
         print('4 - Calcula poluição (Interpolação Lagrange)')
-        print('5 - Sair')
+        print('5 - Plot The Graph!')
+        print('6 - Sair')
         op = int(input('Digite a opção: '))
         print('\n')
 
@@ -239,13 +268,15 @@ def main():
 
             x = float(input('Valor do ponto: '))
             print('O grau de poluição é de {:.4f}.\n'.format(result_Polinomio(x)))
-
         elif op == 5:
-
+            print('Ploting Graph')
+            plot_results()
+        elif op == 6:
             print('Bye bye! :)')
             break
         else: 
             print('Inválido!')
+            return 'bugou'
 
 
 if __name__ == "__main__":
